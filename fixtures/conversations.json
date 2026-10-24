@@ -1,0 +1,44 @@
+{
+  "colors": {
+    "turns": [
+      {
+        "text": "Name the three primary colors of light, in one sentence.",
+        "max_tokens": 48,
+        "sampling": { "temperature": 0, "top_p": 1, "top_k": 1, "presence_penalty": 0 },
+        "seed": 0,
+        "expect": ["red", "green", "blue"]
+      },
+      {
+        "text": "Which color do you get when you mix the first two?",
+        "thinking": true,
+        "max_tokens": 96,
+        "sampling": { "temperature": 0, "top_p": 1, "top_k": 1, "presence_penalty": 0 },
+        "seed": 0
+      }
+    ]
+  },
+  "receipt": {
+    "turns": [
+      {
+        "text": "What is the total on this receipt, and how was it paid?",
+        "images": ["example-receipt.png"],
+        "max_tokens": 64,
+        "sampling": { "temperature": 0, "top_p": 1, "top_k": 1, "presence_penalty": 0 },
+        "seed": 0,
+        "expect": ["125.01", "4421"]
+      }
+    ]
+  },
+  "clip": {
+    "turns": [
+      {
+        "text": "Which way does the square move? Answer in one sentence.",
+        "videos": ["example-video.mp4"],
+        "max_tokens": 48,
+        "sampling": { "temperature": 0, "top_p": 1, "top_k": 1, "presence_penalty": 0 },
+        "seed": 0,
+        "expect": ["right"]
+      }
+    ]
+  }
+}
