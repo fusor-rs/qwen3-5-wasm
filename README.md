@@ -11,6 +11,8 @@
 
 **Replies written at 84 tokens a second, a follow-up started in 0.14 s**, in Chrome on an Apple M4 Pro, eight threads. [How fast is it](#how-fast-is-it)
 
+<a href="https://huggingface.co/spaces/fusorlabs/qwen3-5-wasm"><img src="assets/demo/demo.gif" alt="qwen3-5-wasm in Chrome: Qwen3.5-2B reads a receipt photo on the CPU and answers its total and payment at 85 tokens a second, zero network requests" width="720"></a>
+
 Talk to Qwen's [Qwen3.5-2B](https://huggingface.co/Qwen/Qwen3.5-2B), show it images and videos, let it think first if you like, and read each reply as it is written, computed on your own device. No server, no API key, no GPU required, and once the model has loaded, nothing you type or show leaves the page.
 
 qwen3-5-wasm is the app around the model: a [fusor](https://github.com/fusor-rs/fusor) page, the browser runtime and a native CLI. The model itself, compiled to WebAssembly, is built with [fusor-ai](https://github.com/fusor-rs/fusor-ai), the toolkit for AI runtimes in Rust and WebAssembly, from the published weights.
