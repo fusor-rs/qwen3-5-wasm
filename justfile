@@ -63,5 +63,61 @@ chat: native media
 bench case="receipt": native media
     target/release/qwen3-5 bench {{model}} {{conversations}} {{case}} --media {{media}}
 
+# Its tensor parts are named by their BLAKE3, so /model/parts/ can be cached as immutable.
+# The page, its four runtimes and the bundle beside it, as a static site in target/site.
+site: runtimes page
+    rm -rf target/site
+    mkdir -p target/site
+    cp -R {{app}}/dist/. target/site/
+    find target/site -name '.fusor-*.json' -delete
+    node scripts/site-bundle.mjs {{model}} target/site/model
+    cp {{model}}/LICENSE target/site/model/
+
+# The Space holds at most 1 GB, so it gets the page, the runtimes and the model's licenses, and the
+# page loads the bundle from the model repo fusorlabs/qwen3.5-2b-web (`just deploy-model`). The Space must
+# already exist as a static Space: creating it with the upload makes a Gradio Space, which
+# Hugging Face refuses for a free organization.
+# The site to the Hugging Face Space fusorlabs/qwen3-5-wasm, configured by space/README.md.
+deploy-space: site
+    #!/usr/bin/env bash
+    set -euo pipefail
+    rm -rf target/space
+    rsync -a --exclude /model target/site/ target/space/
+    rsync -a --include '*/' --include 'LICENSE*' --include NOTICE --exclude '*' target/site/model/ target/space/model/
+    cp space/README.md target/space/
+    uv run --no-project --with huggingface_hub==0.36.2 python - target/space <<'PY'
+    import sys
+    from huggingface_hub import HfApi
+
+    HfApi().upload_folder(
+        repo_id="fusorlabs/qwen3-5-wasm",
+        repo_type="space",
+        folder_path=sys.argv[1],
+        delete_patterns="*",
+        commit_message="Deploy qwen3-5-wasm {{version}}",
+    )
+    PY
+
+# Deploy it before the Space whenever the bundle changes: the runtime only loads a bundle compiled
+# with the same fusor-ai.
+# The site's bundle, with space/MODEL.md as its card, to the model repo fusorlabs/qwen3.5-2b-web.
+deploy-model: site
+    #!/usr/bin/env bash
+    set -euo pipefail
+    cp space/MODEL.md target/site/model/README.md
+    uv run --no-project --with huggingface_hub==0.36.2 python - target/site/model <<'PY'
+    import sys
+    from huggingface_hub import HfApi
+
+    api = HfApi()
+    api.create_repo("fusorlabs/qwen3.5-2b-web", exist_ok=True)
+    api.upload_folder(
+        repo_id="fusorlabs/qwen3.5-2b-web",
+        folder_path=sys.argv[1],
+        delete_patterns="*",
+        commit_message="Deploy the qwen3-5-wasm {{version}} bundle",
+    )
+    PY
+
 # The fixed inputs the checks read.
 fixtures: media

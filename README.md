@@ -7,13 +7,17 @@
 
 # A conversation about text, images and videos in the browser, on the CPU
 
+**[Try it in your browser](https://huggingface.co/spaces/fusorlabs/qwen3-5-wasm)**: no install, no server. The model downloads once and runs on your CPU.
+
+**Replies written at 84 tokens a second, a follow-up started in 0.14 s**, in Chrome on an Apple M4 Pro, eight threads. [How fast is it](#how-fast-is-it)
+
 Talk to Qwen's [Qwen3.5-2B](https://huggingface.co/Qwen/Qwen3.5-2B), show it images and videos, let it think first if you like, and read each reply as it is written, computed on your own device. No server, no API key, no GPU required, and once the model has loaded, nothing you type or show leaves the page.
 
 qwen3-5-wasm is the app around the model: a [fusor](https://github.com/fusor-rs/fusor) page, the browser runtime and a native CLI. The model itself, compiled to WebAssembly, is built with [fusor-ai](https://github.com/fusor-rs/fusor-ai), the toolkit for AI runtimes in Rust and WebAssembly, from the published weights.
 
 **In development · v0.1**: this is experimental software. See [status and known limitations](#status-and-known-limitations).
 
-[Run it](#run-it-locally) · [How it works](#how-it-works) · [How fast is it](#how-fast-is-it) · [Status](#status-and-known-limitations)
+[Run it](#run-it-locally) · [Try it online](#try-it-online) · [How it works](#how-it-works) · [How fast is it](#how-fast-is-it) · [Status](#status-and-known-limitations)
 
 ## Run it locally
 
@@ -27,6 +31,10 @@ just ui
 and open the address it prints. `just ui` installs the pinned tools (the threads toolchain with rustup; wasm-bindgen, binaryen and the fusor CLI into `.tools/`), downloads the checkpoint at a pinned revision (4.5 GB, each file sha256-checked), compiles it into a 2517 MB bundle, builds the four browser runtimes (a few minutes the first time, seconds after) and the page, and serves it on `http://localhost:8787` with the bundle beside it.
 
 Write a message, or start from an example (a receipt, a short video clip, a question in words), add images and videos by dropping, pasting or choosing them, and press **Send**, even while the model is still loading: the message is replied to the moment the model is ready. The reply streams in, its Markdown drawn; with **Think before replying** the model reasons first, and its reasoning folds away once the answer starts. Every later message continues the same conversation until **New conversation**. **Sampling** takes the model card's settings for each turn (they differ with thinking and with images or videos) or your own temperature, top-p, top-k and presence penalty, and the longest reply. Every reply is measured live: the time from Send to its first token, the tokens written per second, the conversation's tokens and those the turn read, and the network requests since the model loaded, which stay at zero.
+
+## Try it online
+
+Open the Hugging Face Space [fusorlabs/qwen3-5-wasm](https://huggingface.co/spaces/fusorlabs/qwen3-5-wasm) in Chrome or Edge. The page downloads the 2517 MB model once and keeps it in the browser's storage, so the next visit loads in about a second.
 
 ## More ways to run it
 
